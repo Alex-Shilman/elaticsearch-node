@@ -1,49 +1,51 @@
-const elasticsearch = require('elasticsearch');
+const { esClient, esIndex, esType, esClientPing } = require('./config.js');
+
 
 const start = async () => {
-  const client = new elasticsearch.Client({
-    host: 'localhost:9200',
-    // log: 'trace',
-  });
-
-  await client.ping({requestTimeout: 30000});
+  
+  await esClientPing(30000);
   console.log('pinged server');
 
   const query = 'London';
 
-  const resp = await client.search({
-    index: 'osm',
-    type: 'place',
-    body: {
-      sort: [
-        {
-          place_rank_num: {order: 'desc'},
-        },
-        {
-          importance_num: {order: 'desc'},
-        },
-      ],
-      query: {
-        bool: {
-          should: [
-            {
-              match: {
-                name: query,
+  try {
+    const resp = await esClient.search({
+      index: esIndex,
+      type: esType,
+      body: {
+        sort: [
+          {
+            place_rank_num: {order: 'desc'},
+          },
+          {
+            importance_num: {order: 'desc'},
+          },
+        ],
+        query: {
+          bool: {
+            should: [
+              {
+                match: {
+                  name: query,
+                },
               },
-            },
-            {
-              match: {
-                alternative_names: query,
+              {
+                match: {
+                  alternative_names: query,
+                },
               },
-            },
-          ],
+            ],
+          },
         },
       },
-    },
-  });
-  const {hits} = resp.hits;
-
-  console.log(hits);
+    });
+    
+    const {hits} = resp.hits;
+    console.log(hits);
+    
+  } catch (error) {
+    console.trace(error.message);
+  }
 };
 
 start();
