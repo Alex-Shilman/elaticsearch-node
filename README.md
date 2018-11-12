@@ -2,6 +2,8 @@
 
 > Free open-source in-depth tutorial on elasticsearch with node.js
 
+## Elastic Search API docs
+https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html
 
 ## Project description
 
