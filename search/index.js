@@ -9,6 +9,9 @@ const start = async () => {
   const query = 'London';
 
   try {
+    const { count } = await esClient.count({
+      index: esIndex
+    });
     const resp = await esClient.search({
       index: esIndex,
       type: esType,
@@ -41,7 +44,8 @@ const start = async () => {
     });
     
     const {hits} = resp.hits;
-    console.log(hits);
+    console.log('count =>', count);
+    console.log(JSON.stringify(hits));
     
   } catch (error) {
     console.trace(error.message);
